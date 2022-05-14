@@ -9,6 +9,14 @@ Install On-My-Zsh:
 
   https://www.tecmint.com/install-oh-my-zsh-in-ubuntu/
 
+Install z-zsh plugin:
+
+  git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
+
+Install z-autosuggestion:
+
+  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+
 Install NodeJS:
 
   https://heynode.com/tutorial/install-nodejs-locally-nvm/

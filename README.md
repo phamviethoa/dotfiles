@@ -11,11 +11,11 @@ Install On-My-Zsh:
 
 Install z-zsh plugin:
 
-  git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
+    git clone https://github.com/agkozak/zsh-z $ZSH_CUSTOM/plugins/zsh-z
 
 Install z-autosuggestion:
 
-  git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 
 Install NodeJS:
 
@@ -23,7 +23,7 @@ Install NodeJS:
 
 Clone onto your machine:
 
-    git clone git://github.com/codeaholicguy/dotfiles.git
+    git clone git@github.com:phamviethoa/dotfiles.git
 
 Simply run file:
 

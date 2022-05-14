@@ -5,12 +5,21 @@ A set of `vim`, `zsh`, and `tmux` configuration files for JavaScript Developer w
 
 Install
 -------
+Install On-My-Zsh:
+
+  https://www.tecmint.com/install-oh-my-zsh-in-ubuntu/
+
+Install NodeJS:
+
+  https://heynode.com/tutorial/install-nodejs-locally-nvm/
 
 Clone onto your machine:
 
     git clone git://github.com/codeaholicguy/dotfiles.git
 
-Simply run file (maybe you  must run `chmod +x ./install.sh` before run that file):
+Simply run file:
+
+    chmod +x ./install.sh
 
     ./install.sh --macos
     

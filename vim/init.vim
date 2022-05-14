@@ -1,1 +1,1 @@
-/Users/hoangnguyen/Documents/Working/Codeaholicguy/Code/dotfiles/vimrc
+/home/iris/dotfiles/vimrc

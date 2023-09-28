@@ -75,7 +75,7 @@ plugins=(git zsh-autosuggestions)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-# export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
+export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
 
 # export MANPATH="/usr/local/man:$MANPATH"
 

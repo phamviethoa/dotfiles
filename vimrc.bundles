@@ -17,6 +17,8 @@ Plug 'honza/vim-snippets'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'mattn/emmet-vim'
 Plug 'dart-lang/dart-vim-plugin'
+Plug 'https://github.com/Konfekt/vim-wsl-copy-paste'
+Plug 'nvim-treesitter/nvim-treesitter'
 
 call plug#end()
 

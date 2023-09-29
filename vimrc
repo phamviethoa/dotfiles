@@ -128,7 +128,7 @@ nmap [ :vertical res -2<CR> " vertical decrease pane by 2
 map <C-h> :nohl<CR>
 
 " NERD tree configuration
-noremap <C-d> :NERDTreeToggle<CR>
+noremap <C-f> :NERDTreeToggle<CR>
 nnoremap F :NERDTreeFind<CR>
 
 let NERDTreeShowHidden=1

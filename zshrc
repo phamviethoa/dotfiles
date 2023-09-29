@@ -75,7 +75,7 @@ plugins=(git zsh-autosuggestions)
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-# export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
+export PATH=/home/linuxbrew/.linuxbrew/bin:$PATH
 
 # export MANPATH="/usr/local/man:$MANPATH"
 
@@ -106,6 +106,9 @@ export EDITOR='nvim'
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias vim="nvim"
 alias reload='source ~/.zshrc'
+
+# cd to folder return by fzf
+alias fcd='cd $(find . -type d -print | fzf)'
 
 alias gsync="git checkout master && git fetch upstream && git rebase upstream/master && git push"
 alias glog='git log --graph --oneline --decorate --all'

@@ -55,6 +55,15 @@ function install_wsl2 {
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   fi
 
+  if [ "$(is_installed tmux)" == "0" ]; then
+    echo "Installing tmux"
+    brew install tmux
+    echo "Installing reattach-to-user-namespace"
+    brew install reattach-to-user-namespace
+    echo "Installing tmux-plugin-manager"
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  fi
+
   if [ "$(is_installed git)" == "0" ]; then
     echo "Installing Git"
     brew install git
@@ -78,6 +87,11 @@ function install_wsl2 {
   if [ "$(is_installed node)" == "0" ]; then
     echo "Install NodeJS"
     curl -sL install-node.vercel.app/lts | sudo bash -
+  fi
+
+  if [ "$(is_installed tldr)" == "0" ]; then
+    echo "Install TLDR"
+    sudo npm install -g tldr
   fi
 }
 

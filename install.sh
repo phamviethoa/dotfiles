@@ -49,19 +49,14 @@ function install_wsl2 {
   if [ "$(is_installed tmux)" == "0" ]; then
     echo "Installing tmux"
     brew install tmux
-    echo "Installing reattach-to-user-namespace"
-    brew install reattach-to-user-namespace
-    echo "Installing tmux-plugin-manager"
-    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
   fi
 
-  if [ "$(is_installed tmux)" == "0" ]; then
-    echo "Installing tmux"
-    brew install tmux
-    echo "Installing reattach-to-user-namespace"
-    brew install reattach-to-user-namespace
+  if [ ! -d ~/.tmux ]; then
+    #echo "Installing reattach-to-user-namespace"
+    #brew install reattach-to-user-namespace
     echo "Installing tmux-plugin-manager"
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+    tmux source ~/.tmux.conf
   fi
 
   if [ "$(is_installed git)" == "0" ]; then

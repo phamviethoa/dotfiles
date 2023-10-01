@@ -2,6 +2,9 @@
   "tsserver.implicitProjectConfig.experimentalDecorators": true,
   "snippets.ultisnips.usePythonx": false,
   "codeLens.enable": true,
+
   "java.referencesCodeLens": true,
-  "java.compile.nullAnalysis.mode": "automatic"
+  "java.compile.nullAnalysis.mode": "automatic",
+
+  "python.jediEnabled": false
 }

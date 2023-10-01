@@ -19,6 +19,7 @@ Plug 'mattn/emmet-vim'
 Plug 'dart-lang/dart-vim-plugin'
 Plug 'https://github.com/Konfekt/vim-wsl-copy-paste'
 Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'townk/vim-autoclose'
 
 call plug#end()
 

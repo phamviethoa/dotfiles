@@ -107,6 +107,9 @@ export EDITOR='nvim'
 alias vim="nvim"
 alias reload='source ~/.zshrc'
 
+# cd to folder return by fzf
+alias fcd='cd $(find . -type d -print | fzf)'
+
 alias gsync="git checkout master && git fetch upstream && git rebase upstream/master && git push"
 alias glog='git log --graph --oneline --decorate --all'
 

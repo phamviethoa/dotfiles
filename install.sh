@@ -96,9 +96,7 @@ function backup {
 
   mv ~/.zshrc ~/$backup_dir/.zshrc
   mv ~/.tmux.conf ~/$backup_dir/.tmux.conf
-  mv ~/.vim ~/$backup_dir/.vim
-  mv ~/.vimrc ~/$backup_dir/.vimrc
-  mv ~/.vimrc.bundles ~/$backup_dir/.vimrc.bundles
+  mv ~/.config/nvim ~/$backup_dir/.config/nvim
 }
 
 function link_dotfiles {
@@ -106,18 +104,12 @@ function link_dotfiles {
 
   ln -s $(pwd)/zsh/zshrc ~/.zshrc
   ln -s $(pwd)/tmux/tmux.conf ~/.tmux.conf
-  # ln -s $(pwd)/vim ~/.vim
-  # ln -s $(pwd)/vimrc ~/.vimrc
-  # ln -s $(pwd)/vimrc.bundles ~/.vimrc.bundles
 
-  rm -rf $HOME/.config/nvim/init.vim
   rm -rf $HOME/.config/nvim
-  rm -rf $HOME/.vim/bundle/*
-
   mkdir -p ${XDG_CONFIG_HOME:=$HOME/.config}
-
   ln -s $(pwd)/nvim $XDG_CONFIG_HOME/nvim
-  # ln -s $(pwd)/vimrc $XDG_CONFIG_HOME/nvim/init.vim
+
+  rm -rf $HOME/.oh-my-zsh/themes/dracula.zsh-theme
   ln -s $(pwd)/schemes/dracula.zsh-theme $HOME/.oh-my-zsh/themes/dracula.zsh-theme
 
   if [[ ! -f ~/.zshrc.local ]]; then

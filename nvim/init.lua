@@ -1,16 +1,9 @@
--- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
--- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.o`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
 
 -- Make line numbers default
 vim.o.number = true
@@ -88,14 +81,6 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
--- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
--- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
--- is not what someone will guess without a bit more experience.
---
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
-vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
-
 -- Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
@@ -112,10 +97,12 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- Quickfix
+-- See `:help quickfix`
 vim.keymap.set('n', '<leader>j', '<cmd>cnext<CR>', { desc = 'Move to the next item in Quick Fix list' })
 vim.keymap.set('n', '<leader>k', '<cmd>cprev<CR>', { desc = 'Move to the previous item in Quick Fix list' })
 
-vim.keymap.set('n', '\\', '<cmd>Oil<CR>')
+-- Notebook
+vim.keymap.set('n', '<leader>on', '<cmd>JupyterOpen<CR>', { desc = 'Open in JupyterLab' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -131,7 +118,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
--- [[ JupyterLab Configuration ]]
+-- [[ Commands ]]
 vim.api.nvim_create_user_command('JupyterOpen', function()
   local filepath = vim.fn.expand '%:p'
   if filepath:sub(-6) ~= '.ipynb' then
@@ -142,8 +129,6 @@ vim.api.nvim_create_user_command('JupyterOpen', function()
   vim.fn.jobstart(cmd, { detach = true })
   print('Opening Jupyter Lab for file: ' .. filepath)
 end, {})
-
-vim.keymap.set('n', '<leader>ojl', ':JupyterOpen<CR>', { desc = 'Open in JupyterLab' })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info

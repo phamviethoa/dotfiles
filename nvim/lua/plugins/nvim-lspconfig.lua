@@ -212,6 +212,8 @@ return {
           },
         },
 
+        terraformls = {},
+
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },

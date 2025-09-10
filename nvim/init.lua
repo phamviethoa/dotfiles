@@ -128,6 +128,16 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Workaround for terraform files
+vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
+  pattern = { '*.tf', '*.tfvars' },
+  callback = function()
+    -- This forces the filetype to be 'terraform' immediately,
+    -- even if the file is empty.
+    vim.bo.filetype = 'terraform'
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'

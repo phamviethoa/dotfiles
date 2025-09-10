@@ -17,7 +17,7 @@ return {
         },
       }
 
-      vim.keymap.set('n', '\\', '<cmd>Oil<CR>', { desc = 'Open Oil file explorer' })
+      vim.keymap.set('n', 'F', '<cmd>Oil<CR>', { desc = 'Open Oil file explorer' })
     end,
   },
 }

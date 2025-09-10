@@ -101,8 +101,18 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '<leader>j', '<cmd>cnext<CR>', { desc = 'Move to the next item in Quick Fix list' })
 vim.keymap.set('n', '<leader>k', '<cmd>cprev<CR>', { desc = 'Move to the previous item in Quick Fix list' })
 
--- Notebook
+-- Open Notebook
 vim.keymap.set('n', '<leader>on', '<cmd>JupyterOpen<CR>', { desc = 'Open in JupyterLab' })
+vim.api.nvim_create_user_command('JupyterOpen', function()
+  local filepath = vim.fn.expand '%:p'
+  if filepath:sub(-6) ~= '.ipynb' then
+    print 'This is not a .ipynb file'
+    return
+  end
+  local cmd = string.format("jupyter lab '%s' &", filepath)
+  vim.fn.jobstart(cmd, { detach = true })
+  print('Opening Jupyter Lab for file: ' .. filepath)
+end, {})
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -117,18 +127,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.hl.on_yank()
   end,
 })
-
--- [[ Commands ]]
-vim.api.nvim_create_user_command('JupyterOpen', function()
-  local filepath = vim.fn.expand '%:p'
-  if filepath:sub(-6) ~= '.ipynb' then
-    print 'This is not a .ipynb file'
-    return
-  end
-  local cmd = string.format("jupyter lab '%s' &", filepath)
-  vim.fn.jobstart(cmd, { detach = true })
-  print('Opening Jupyter Lab for file: ' .. filepath)
-end, {})
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -155,45 +153,14 @@ rtp:prepend(lazypath)
 --  To update plugins you can run
 --    :Lazy update
 --
-require('lazy').setup({
-  'NMAC427/guess-indent.nvim',
-  require 'plugins.which-key',
-  require 'plugins.telescope',
-  require 'plugins.lazydev',
-  require 'plugins.nvim-lspconfig',
-  require 'plugins.conform',
-  require 'plugins.blink',
-  require 'plugins.dracula',
-  require 'plugins.todo-comments',
-  require 'plugins.lualine',
-  require 'plugins.mini',
-  require 'plugins.treesitter',
-  require 'plugins.oil',
+require('lazy').setup {
+  require 'plugins.language',
+  require 'plugins.search',
+  require 'plugins.appearance',
+  require 'plugins.file_explorer',
   require 'plugins.git',
-  require 'plugins.lint',
-  require 'plugins.autopairs',
-  require 'plugins.vim-visual-multi',
-}, {
-  ui = {
-    -- If you are using a Nerd Font: set icons to an empty table which will use the
-    -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
-    icons = vim.g.have_nerd_font and {} or {
-      cmd = '⌘',
-      config = '🛠',
-      event = '📅',
-      ft = '📂',
-      init = '⚙',
-      keys = '🗝',
-      plugin = '🔌',
-      runtime = '💻',
-      require = '🌙',
-      source = '📄',
-      start = '🚀',
-      task = '📌',
-      lazy = '💤 ',
-    },
-  },
-})
+  require 'plugins.utilities',
+}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

@@ -165,7 +165,7 @@ rtp:prepend(lazypath)
 --
 require('lazy').setup {
   require 'plugins.language',
-  require 'plugins.search',
+  require 'plugins.navigation',
   require 'plugins.appearance',
   require 'plugins.file_explorer',
   require 'plugins.git',

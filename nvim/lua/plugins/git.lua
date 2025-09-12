@@ -39,8 +39,8 @@ return {
           end
         end
 
-        map('n', 'nc', go_to_next_change, { desc = 'Jump to [n]ext git [c]hange' })
-        map('n', 'pc', go_to_prev_change, { desc = 'Jump to previous git [c]hange' })
+        map('n', ']c', go_to_next_change, { desc = 'Jump to [n]ext git [c]hange' })
+        map('n', '[c', go_to_prev_change, { desc = 'Jump to previous git [c]hange' })
 
         map('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'git [s]tage hunk' })
         map('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'git [r]eset hunk' })

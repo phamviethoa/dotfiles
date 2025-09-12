@@ -104,24 +104,24 @@ return {
 
       vim.keymap.set('n', '<C-e>', function()
         harpoon.ui:toggle_quick_menu(harpoon:list())
-      end)
+      end, { desc = 'Open priority pages menu' })
 
       vim.keymap.set('n', '<leader>a', function()
         harpoon:list():add()
-      end)
+      end, { desc = '[A]dd current page to priority menu' })
 
-      vim.keymap.set('n', '1', function()
+      vim.keymap.set('n', '<leader>1', function()
         harpoon:list():select(1)
-      end)
-      vim.keymap.set('n', '2', function()
+      end, { desc = 'Select the [1] priority page' })
+      vim.keymap.set('n', '<leader>2', function()
         harpoon:list():select(2)
-      end)
-      vim.keymap.set('n', '3', function()
+      end, { desc = 'Select the [2] priority page' })
+      vim.keymap.set('n', '<leader>3', function()
         harpoon:list():select(3)
-      end)
-      vim.keymap.set('n', '4', function()
+      end, { desc = 'Select the [3] priority page' })
+      vim.keymap.set('n', '<leader>4', function()
         harpoon:list():select(4)
-      end)
+      end, { desc = 'Select the [4] priority page' })
     end,
   },
 }

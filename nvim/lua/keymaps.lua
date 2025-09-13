@@ -3,11 +3,11 @@
 
 vim.keymap.set('x', '<leader>p', '"_dP')
 
--- page scrolling
+-- Improve page scrolling
 vim.keymap.set('n', '<C-d>', '<C-d>zz')
 vim.keymap.set('n', '<C-u>', '<C-u>zz')
 
--- moving between search occurrences
+-- Improve movement between search occurrences
 vim.keymap.set('n', 'n', 'nzz')
 vim.keymap.set('n', 'N', 'Nzz')
 
@@ -38,7 +38,7 @@ vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper win
 vim.keymap.set('n', '<leader>j', '<cmd>cnext<CR>', { desc = 'Move to the next item in Quick Fix list' })
 vim.keymap.set('n', '<leader>k', '<cmd>cprev<CR>', { desc = 'Move to the previous item in Quick Fix list' })
 
--- Open Notebook
+-- Open Notebook for working with .ipynb files
 vim.keymap.set('n', '<leader>on', '<cmd>JupyterOpen<CR>', { desc = 'Open in JupyterLab' })
 vim.api.nvim_create_user_command('JupyterOpen', function()
   local filepath = vim.fn.expand '%:p'

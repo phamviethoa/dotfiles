@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Pick a directory (edit this list to match your projects)
+DIR=$(find ~/projects -mindepth 1 -maxdepth 1 -type d | fzf)
+
+# Exit if nothing chosen
+[ -z "$DIR" ] && exit 0
+
+# Session name = basename of directory
+SESSION=$(basename "$DIR")
+
+# If session already exists, attach; otherwise create
+if ! tmux has-session -t "$SESSION" 2>/dev/null; then
+    tmux new-session -ds "$SESSION" -c "$DIR"
+fi
+
+tmux switch-client -t "$SESSION" || tmux attach -t "$SESSION"

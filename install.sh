@@ -94,6 +94,7 @@ function link_dotfiles {
   ln -sf $(pwd)/zsh/zshrc ~/.zshrc
   ln -sf $(pwd)/schemes/dracula.zsh-theme $HOME/.oh-my-zsh/themes/dracula.zsh-theme
 
+  mkdir -p ~/.local/bin
   ln -sf $(pwd)/tmux/tmux.conf ~/.tmux.conf
   ln -sf $(pwd)/tmux/tmux-sessionizer ~/.local/bin/tmux-sessionizer
   chmod +x ~/.local/bin/tmux-sessionizer

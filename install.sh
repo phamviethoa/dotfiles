@@ -13,7 +13,6 @@ function install_macos {
   if [[ $OSTYPE != darwin* ]]; then
     return
   fi
-  echo "MacOS detected"
 
   if ! xcode-select -p &>/dev/null; then
     echo "Installing Xcode Command Line Tools..."
@@ -79,6 +78,11 @@ function install_macos {
     brew install gh
   fi
 
+  if [ "$(is_installed z)" == "0" ]; then
+    echo "Installing zoxide..."
+    brew install zoxide
+  fi
+
   if [ "$(is_installed nvim)" == "0" ]; then
     echo "Install neovim..."
     brew install neovim
@@ -89,8 +93,6 @@ function install_macos {
 }
 
 function link_dotfiles {
-  echo "Linking dotfiles..."
-
   ln -sf $(pwd)/zsh/zshrc ~/.zshrc
   ln -sf $(pwd)/schemes/dracula.zsh-theme $HOME/.oh-my-zsh/themes/dracula.zsh-theme
 

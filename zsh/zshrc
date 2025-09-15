@@ -124,9 +124,4 @@ export FZF_DEFAULT_COMMAND='ag -g ""'
 export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
 
 # tmux sessionizer
-function run_sessionizer() {
-  tmux-sessionizer
-  zle reset-prompt
-}
-zle -N run_sessionizer
-bindkey '^F' run_sessionizer
+bindkey -s ^f "tmux-sessionizer\n"

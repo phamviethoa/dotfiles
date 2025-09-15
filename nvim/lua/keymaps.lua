@@ -50,3 +50,6 @@ vim.api.nvim_create_user_command('JupyterOpen', function()
   vim.fn.jobstart(cmd, { detach = true })
   print('Opening Jupyter Lab for file: ' .. filepath)
 end, {})
+
+-- tmux sessionizer
+vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww tmux-sessionizer<CR>')

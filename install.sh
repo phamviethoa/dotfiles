@@ -78,11 +78,6 @@ function install_macos {
     brew install gh
   fi
 
-  if [ "$(is_installed z)" == "0" ]; then
-    echo "Installing zoxide..."
-    brew install zoxide
-  fi
-
   if [ "$(is_installed nvim)" == "0" ]; then
     echo "Install neovim..."
     brew install neovim

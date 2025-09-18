@@ -78,6 +78,11 @@ function install_macos {
     brew install gh
   fi
 
+  if [ "$(is_installed aerospace)" == "0" ]; then
+    echo "Installing Aerospace..."
+    brew install --cask nikitabobko/tap/aerospace
+  fi
+
   if [ "$(is_installed nvim)" == "0" ]; then
     echo "Install neovim..."
     brew install neovim
@@ -98,6 +103,8 @@ function link_dotfiles {
 	
   mkdir -p ~/.config
   ln -sf $(pwd)/nvim ~/.config/nvim
+
+  ln -sf ${pwd}/workspace-manager/.aerospace.toml ~/.aerospace.toml
 }
 
 function show_help {

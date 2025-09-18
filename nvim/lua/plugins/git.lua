@@ -48,6 +48,16 @@ return {
         map('n', '<leader>hb', gitsigns.blame_line, { desc = 'git [b]lame line' })
 
         map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = '[T]oggle git show [b]lame line' })
+
+        map('v', '<leader>hs', function()
+          -- Get start/end of visual selection
+          local first = vim.fn.line '.'
+          local last = vim.fn.line 'v'
+          -- Order them (since selection can be backwards)
+          local start_line = math.min(first, last)
+          local end_line = math.max(first, last)
+          require('gitsigns').stage_hunk { start_line, end_line }
+        end, { desc = 'git [s]tage selected hunk/block' })
       end,
     },
   },

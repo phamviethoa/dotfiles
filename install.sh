@@ -104,7 +104,7 @@ function link_dotfiles {
   mkdir -p ~/.config
   ln -sf $(pwd)/nvim ~/.config/nvim
 
-  ln -sf ${pwd}/workspace-manager/.aerospace.toml ~/.aerospace.toml
+  ln -sf $(pwd)/workspace-manager/.aerospace.toml ~/.aerospace.toml
 }
 
 function show_help {

@@ -16,7 +16,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- When create a new .tf files, the buffer file type was detached as tf rather than terraform
 -- that cause fail to load terraform lsp and treesitter
 vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
-  pattern = { '*.tf', '*.tfvars' },
+  pattern = { '*.tf' },
   callback = function()
     -- This forces the filetype to be 'terraform' immediately,
     -- even if the file is empty.

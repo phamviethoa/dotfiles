@@ -1,4 +1,48 @@
--- TODO: add standard input config for language (i.e lsp)
+local lsp_servers_config = {
+  -- Python LSP
+  pylsp = {
+    settings = {
+      pylsp = {
+        plugins = {
+          pyflakes = { enabled = false },
+          pycodestyle = { enabled = false },
+          autopep8 = { enabled = false },
+          yapf = { enabled = false },
+          mccabe = { enabled = false },
+          pylsp_mypy = { enabled = false },
+          pylsp_black = { enabled = false },
+          pylsp_isort = { enabled = false },
+        },
+      },
+    },
+  },
+
+  -- Bash LSP
+  bashls = {},
+
+  -- Terraform LSP
+  terraformls = {},
+
+  -- Lua LSP
+  lua_ls = {
+    settings = {
+      Lua = {
+        completion = {
+          callSnippet = 'Replace',
+        },
+      },
+    },
+  },
+}
+
+local linter_config = {
+  -- markdown = { 'markdownlint' },
+}
+
+local forrmater_config = {
+  lua = { 'stylua' },
+  sh = { 'beautysh' },
+}
 
 return {
   {
@@ -195,36 +239,7 @@ return {
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-      local servers = {
-        pylsp = {
-          settings = {
-            pylsp = {
-              plugins = {
-                pyflakes = { enabled = false },
-                pycodestyle = { enabled = false },
-                autopep8 = { enabled = false },
-                yapf = { enabled = false },
-                mccabe = { enabled = false },
-                pylsp_mypy = { enabled = false },
-                pylsp_black = { enabled = false },
-                pylsp_isort = { enabled = false },
-              },
-            },
-          },
-        },
-
-        terraformls = {},
-
-        lua_ls = {
-          settings = {
-            Lua = {
-              completion = {
-                callSnippet = 'Replace',
-              },
-            },
-          },
-        },
-      }
+      local servers = lsp_servers_config
 
       -- Ensure the servers and tools above are installed
       --
@@ -242,6 +257,7 @@ return {
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'beautysh',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -356,8 +372,9 @@ return {
       signature = { enabled = true },
     },
   },
+
+  -- Formatter
   {
-    -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
     cmd = { 'ConformInfo' },
@@ -382,19 +399,12 @@ return {
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 2000,
             lsp_format = 'fallback',
           }
         end
       end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
-      },
+      formatters_by_ft = forrmater_config,
     },
   },
   { -- Linting
@@ -402,9 +412,7 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       local lint = require 'lint'
-      lint.linters_by_ft = {
-        -- markdown = { 'markdownlint' },
-      }
+      lint.linters_by_ft = linter_config
 
       -- To allow other plugins to add linters to require('lint').linters_by_ft,
       -- instead set linters_by_ft like this:

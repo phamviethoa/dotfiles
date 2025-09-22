@@ -41,7 +41,9 @@ local linter_config = {
 
 local forrmater_config = {
   lua = { 'stylua' },
-  sh = { 'beautysh' },
+  sh = { 'shfmt' },
+  bash = { 'shfmt' },
+  python = { 'black' },
 }
 
 return {
@@ -257,7 +259,6 @@ return {
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'beautysh',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 

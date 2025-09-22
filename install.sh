@@ -4,9 +4,19 @@ function is_installed {
   # set to 1 initially
   local return_=1
   # set to 0 if not found
-  type $1 >/dev/null 2>&1 || { local return_=0;  }
+  type $1 >/dev/null 2>&1 || { local return_=0; }
   # return
   echo "$return_"
+}
+
+function install_databricks {
+  echo "Installing Databricks Development"
+
+  if [ "$(is_installed databricks)" == "0" ]; then
+    echo "Installing Databricks CLI"
+    brew tap databricks/tap
+    brew install databricks
+  fi
 }
 
 function install_macos {
@@ -22,7 +32,7 @@ function install_macos {
   if [ "$(is_installed brew)" == "0" ]; then
     echo "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zprofile
     eval "$(/opt/homebrew/bin/brew shellenv)"
   fi
 
@@ -94,13 +104,13 @@ function install_macos {
 
 function link_dotfiles {
   ln -sf $(pwd)/zsh/zshrc ~/.zshrc
-  ln -sf $(pwd)/schemes/dracula.zsh-theme $HOME/.oh-my-zsh/themes/dracula.zsh-theme
+  ln -sf $(pwd)/schemes/dracula.zsh-theme "$HOME"/.oh-my-zsh/themes/dracula.zsh-theme
 
   mkdir -p ~/.local/bin
   ln -sf $(pwd)/tmux/tmux.conf ~/.tmux.conf
   ln -sf $(pwd)/tmux/tmux-sessionizer ~/.local/bin/tmux-sessionizer
   chmod +x ~/.local/bin/tmux-sessionizer
-	
+
   mkdir -p ~/.config
   ln -sf $(pwd)/nvim ~/.config/nvim
 
@@ -115,26 +125,31 @@ Options:
   --help        Show this help message
   --macos     	Setup for MacOS machine
   --dotfiles	Run link dotfiles only
+  --databricks  Install packages for Databricks development
 EOF
 }
 
-while test $# -gt 0; do 
+while test $# -gt 0; do
   case "$1" in
-    --help)
-      show_help
-      exit
-      ;;
-    --macos)
-      install_macos
-      link_dotfiles
-      zsh
-      source ~/.zshrc
-      exit
-      ;;
-    --dotfiles)
-      link_dotfiles
-      exit
-      ;;
+  --help)
+    show_help
+    exit
+    ;;
+  --macos)
+    install_macos
+    link_dotfiles
+    zsh
+    source ~/.zshrc
+    exit
+    ;;
+  --dotfiles)
+    link_dotfiles
+    exit
+    ;;
+  --databricks)
+    install_databricks
+    exit
+    ;;
   esac
 
   shift

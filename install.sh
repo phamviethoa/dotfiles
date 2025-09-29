@@ -9,16 +9,6 @@ function is_installed {
   echo "$return_"
 }
 
-function install_databricks {
-  echo "Installing Databricks Development"
-
-  if [ "$(is_installed databricks)" == "0" ]; then
-    echo "Installing Databricks CLI"
-    brew tap databricks/tap
-    brew install databricks
-  fi
-}
-
 function install_macos {
   if [[ $OSTYPE != darwin* ]]; then
     return
@@ -167,7 +157,6 @@ Options:
   --help        Show this help message
   --macos       Setup for MacOS machine
   --dotfiles    Run link dotfiles only
-  --databricks  Install packages for Databricks development
   --check       Verify installation and symlinks
   --dry-run     Show what would be installed without making changes
 EOF
@@ -212,14 +201,6 @@ while test $# -gt 0; do
       echo "  $(pwd)/nvim -> ~/.config/nvim"
     else
       link_dotfiles
-    fi
-    exit
-    ;;
-  --databricks)
-    if [ "$DRY_RUN" = true ]; then
-      echo "Would install: Databricks CLI"
-    else
-      install_databricks
     fi
     exit
     ;;

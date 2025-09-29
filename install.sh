@@ -100,19 +100,63 @@ function install_macos {
     echo "Install workspace manager (flashspace)..."
     brew install flashspace
   fi
+
+  if [ "$(is_installed claude)" == "0" ]; then
+    echo "Install claude code..."
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+    \. "$HOME/.nvm/nvm.sh"
+    nvm install 22
+    npm install -g @anthropic-ai/claude-code
+  fi
 }
 
 function link_dotfiles {
-  ln -sf $(pwd)/zsh/zshrc ~/.zshrc
+  # Link zsh configuration directory and main zshrc
+  mkdir -p ~/.config
+  ln -sf $(pwd)/zsh ~/.config/zsh
+  ln -sf ~/.config/zsh/zshrc ~/.zshrc
   ln -sf $(pwd)/schemes/dracula.zsh-theme "$HOME"/.oh-my-zsh/themes/dracula.zsh-theme
 
+  # Link tmux configuration
   mkdir -p ~/.local/bin
   ln -sf $(pwd)/tmux/tmux.conf ~/.tmux.conf
   ln -sf $(pwd)/tmux/tmux-sessionizer ~/.local/bin/tmux-sessionizer
   chmod +x ~/.local/bin/tmux-sessionizer
 
-  mkdir -p ~/.config
+  # Link neovim configuration
   ln -sf $(pwd)/nvim ~/.config/nvim
+}
+
+function check_installation {
+  echo "Checking installation..."
+
+  local all_good=true
+
+  # Check tools
+  for tool in brew zsh tmux nvim fzf ag git gh; do
+    if command -v $tool >/dev/null 2>&1; then
+      echo "✓ $tool is installed"
+    else
+      echo "✗ $tool is NOT installed"
+      all_good=false
+    fi
+  done
+
+  # Check symlinks
+  for link in ~/.zshrc ~/.tmux.conf ~/.local/bin/tmux-sessionizer ~/.config/nvim ~/.config/zsh; do
+    if [ -L "$link" ]; then
+      echo "✓ $link is linked"
+    else
+      echo "✗ $link is NOT linked"
+      all_good=false
+    fi
+  done
+
+  if [ "$all_good" = true ]; then
+    echo -e "\n✓ All checks passed!"
+  else
+    echo -e "\n✗ Some checks failed. Run ./install.sh --macos or ./install.sh --dotfiles"
+  fi
 }
 
 function show_help {
@@ -121,11 +165,15 @@ Usage: install.sh [options]
 
 Options:
   --help        Show this help message
-  --macos     	Setup for MacOS machine
-  --dotfiles	Run link dotfiles only
+  --macos       Setup for MacOS machine
+  --dotfiles    Run link dotfiles only
   --databricks  Install packages for Databricks development
+  --check       Verify installation and symlinks
+  --dry-run     Show what would be installed without making changes
 EOF
 }
+
+DRY_RUN=false
 
 while test $# -gt 0; do
   case "$1" in
@@ -133,19 +181,46 @@ while test $# -gt 0; do
     show_help
     exit
     ;;
+  --dry-run)
+    DRY_RUN=true
+    echo "DRY RUN MODE - No changes will be made"
+    echo "---"
+    ;;
+  --check)
+    check_installation
+    exit
+    ;;
   --macos)
-    install_macos
-    link_dotfiles
-    zsh
-    source ~/.zshrc
+    if [ "$DRY_RUN" = true ]; then
+      echo "Would install: Homebrew, Xcode tools, iTerm2, zsh, neovim, tmux, fzf, ag, git, gh, flashspace, claude"
+      echo "Would link: zsh, tmux, nvim configs"
+    else
+      install_macos
+      link_dotfiles
+      zsh
+      source ~/.zshrc
+    fi
     exit
     ;;
   --dotfiles)
-    link_dotfiles
+    if [ "$DRY_RUN" = true ]; then
+      echo "Would create symlinks:"
+      echo "  $(pwd)/zsh -> ~/.config/zsh"
+      echo "  ~/.config/zsh/zshrc -> ~/.zshrc"
+      echo "  $(pwd)/tmux/tmux.conf -> ~/.tmux.conf"
+      echo "  $(pwd)/tmux/tmux-sessionizer -> ~/.local/bin/tmux-sessionizer"
+      echo "  $(pwd)/nvim -> ~/.config/nvim"
+    else
+      link_dotfiles
+    fi
     exit
     ;;
   --databricks)
-    install_databricks
+    if [ "$DRY_RUN" = true ]; then
+      echo "Would install: Databricks CLI"
+    else
+      install_databricks
+    fi
     exit
     ;;
   esac

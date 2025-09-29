@@ -39,7 +39,7 @@ local linter_config = {
   -- markdown = { 'markdownlint' },
 }
 
-local forrmater_config = {
+local formatter_config = {
   lua = { 'stylua' },
   sh = { 'shfmt' },
   bash = { 'shfmt' },
@@ -405,7 +405,7 @@ return {
           }
         end
       end,
-      formatters_by_ft = forrmater_config,
+      formatters_by_ft = formatter_config,
     },
   },
   { -- Linting

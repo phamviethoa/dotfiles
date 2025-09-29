@@ -1,3 +1,24 @@
+# Build outputs
 dist
 build
 vim/bundle/*
+
+# OS files
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Editor directories
+.vscode/
+.idea/
+*.code-workspace
+
+# Local overrides (not tracked)
+*.local
+zsh/zshrc.local
+nvim/lua/local.lua
+
+# Temporary files
+*.tmp
+*.bak

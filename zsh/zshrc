@@ -86,3 +86,15 @@ source "$ZSHDIR/tools.zsh"
 
 # Source local overrides if they exist (not tracked by git)
 [ -f "$ZSHDIR/zshrc.local" ] && source "$ZSHDIR/zshrc.local"
+
+export FZF_DEFAULT_COMMAND='ag -g ""'
+export FZF_DEFAULT_OPTS='--height 40% --reverse --border'
+
+# tmux sessionizer
+bindkey -s ^f "tmux-sessionizer\n"
+
+eval "$(zoxide init zsh)"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion

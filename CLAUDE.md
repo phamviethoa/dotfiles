@@ -20,11 +20,11 @@ This installs all dependencies (Homebrew, iTerm2, zsh, oh-my-zsh, neovim, tmux, 
 ```
 Creates symlinks for all configuration files without installing dependencies.
 
-### Databricks Development
+### dbt Development
 ```bash
-./install.sh --databricks
+./install.sh --dbt
 ```
-Installs Databricks CLI for Databricks-specific development.
+Installs the [dbt language server](https://github.com/j-clemons/dbt-language-server) (`~/.local/bin/dbt-language-server`) for dbt autocomplete/go-to-definition in Neovim. See the "dbt Support" section below for how highlighting, LSP, and formatting are wired up.
 
 ### Verify Installation
 ```bash
@@ -60,13 +60,22 @@ Based on kickstart.nvim with modular plugin organization:
 Plugin manager: [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ### Language Support Configuration
-- **LSP servers**: `pylsp` (Python), `bashls` (Bash), `terraformls` (Terraform), `lua_ls` (Lua)
-- **Formatters**: stylua (Lua), shfmt (Bash/sh), black (Python)
+- **LSP servers**: `pylsp` (Python), `bashls` (Bash), `terraformls` (Terraform), `lua_ls` (Lua), `gh_actions_ls` (GitHub Actions YAML), plus `dbt` (dbt language server, enabled only when its binary is on `$PATH` — see "dbt Support")
+- **Formatters**: stylua (Lua), shfmt (Bash/sh), black (Python), sqlfluff (SQL/dbt), yamlfmt (YAML)
 - **Linters**: Configured per-filetype in `lua/plugins/language.lua`
 
 Tools are managed via Mason (`:Mason` to open). All LSP/linter/formatter configs are in `lua/plugins/language.lua:1-47`.
 
 **Note:** Variable name was corrected from `forrmater_config` to `formatter_config` in the language configuration.
+
+### dbt Support (Neovim)
+dbt projects (detected via a `dbt_project.yml` ancestor) get three features, all configured in `lua/plugins/language.lua`:
+
+1. **Syntax highlighting (`.sql` + Jinja):** The `jinja` Treesitter parser is registered as the root language for `sql`-filetype buffers (`vim.treesitter.language.register('jinja', 'sql')`). Jinja highlights `{{ ... }}` / `{% ... %}` (e.g. `ref()`, `source()` render as function calls), and SQL is injected into the surrounding text via `nvim/after/queries/jinja/injections.scm`. Plain (non-dbt) `.sql` files parse as a single injected SQL region, so they keep full SQL highlighting. Treesitter indent is disabled for `sql`/`jinja` (sqlfluff handles formatting). Requires the `sql`, `jinja`, and `jinja_inline` parsers.
+2. **LSP autocomplete:** `dbt-language-server` is registered under the config name `dbt` (filetypes `sql`, `yaml`; root marker `dbt_project.yml`). It only enables when the binary is on `$PATH` (install via `./install.sh --dbt`). Provides completion for `ref()`/`source()`/seeds/macros/vars, hover, and go-to-definition.
+3. **Format on save:** `.sql` → `sqlfluff`, `.yml` → `yamlfmt` (both via conform.nvim). The `sqlfluff` formatter prefers the dbt project's own `.venv/bin/sqlfluff` (falling back to the Mason-installed one), runs from the project root so the project's `.sqlfluff` is honored, and passes `--templater jinja` so formatting works offline without a warehouse connection (sqlfluff's `apply_dbt_builtins` mocks `ref`/`source`/`config`/`var`). To honor a project's `dbt` templater exactly instead, remove the `--templater jinja` arg (slower; requires dbt + a profile).
+
+**Per-project tooling:** Install `sqlfluff` and `dbt` inside each dbt project's virtualenv (e.g. `uv sync`); Neovim automatically prefers `<project>/.venv/bin/sqlfluff`.
 
 ### Custom Neovim Commands
 All diagnostic commands use the centralized utility module at `lua/utils/diagnostics.lua`:

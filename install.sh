@@ -59,6 +59,12 @@ function install_macos {
     /opt/homebrew/opt/fzf/install
   fi
 
+  # Mason (neovim tool installer) downloads some packages with wget.
+  if [ "$(is_installed wget)" == "0" ]; then
+    echo "Installing wget..."
+    brew install wget
+  fi
+
   if [ "$(is_installed tmux)" == "0" ]; then
     echo "Installing tmux..."
     brew install tmux
@@ -98,6 +104,23 @@ function install_macos {
     nvm install 22
     npm install -g @anthropic-ai/claude-code
   fi
+}
+
+function install_dbt {
+  # dbt language server (j-clemons/dbt-language-server): completion for
+  # ref()/source()/macros, hover, and go-to-definition inside dbt projects.
+  # Distributed as a standalone binary (not available via Mason).
+  if [ "$(is_installed dbt-language-server)" == "0" ]; then
+    echo "Installing dbt-language-server..."
+    curl -fsSL https://j-clemons.com/dbt-language-server/install | bash
+    echo "Note: ensure the install directory is on your PATH (see installer output)."
+  else
+    echo "dbt-language-server already installed."
+  fi
+
+  # Per-project sqlfluff + dbt live in each dbt project's own virtualenv
+  # (e.g. via 'uv sync'); neovim prefers <project>/.venv/bin/sqlfluff when present.
+  echo "Reminder: install sqlfluff/dbt inside each dbt project's venv (e.g. 'uv sync')."
 }
 
 function link_dotfiles {
@@ -157,6 +180,7 @@ Options:
   --help        Show this help message
   --macos       Setup for MacOS machine
   --dotfiles    Run link dotfiles only
+  --dbt         Install dbt language server (for neovim dbt support)
   --check       Verify installation and symlinks
   --dry-run     Show what would be installed without making changes
 EOF
@@ -181,13 +205,21 @@ while test $# -gt 0; do
     ;;
   --macos)
     if [ "$DRY_RUN" = true ]; then
-      echo "Would install: Homebrew, Xcode tools, iTerm2, zsh, neovim, tmux, fzf, ag, git, gh, flashspace, claude"
+      echo "Would install: Homebrew, Xcode tools, iTerm2, zsh, neovim, tmux, fzf, ag, wget, git, gh, flashspace, claude"
       echo "Would link: zsh, tmux, nvim configs"
     else
       install_macos
       link_dotfiles
       zsh
       source ~/.zshrc
+    fi
+    exit
+    ;;
+  --dbt)
+    if [ "$DRY_RUN" = true ]; then
+      echo "Would install: dbt-language-server (via curl | bash)"
+    else
+      install_dbt
     fi
     exit
     ;;

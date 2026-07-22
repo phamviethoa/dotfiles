@@ -12,6 +12,20 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Use 4-space indentation for SQL / dbt files.
+-- Neovim's default is 8, and we disable Treesitter indent for `sql` (the Jinja
+-- root parser has no SQL indent rules), so set the buffer indent options here.
+-- Matches the dbt project's `.sqlfluff` (tab_space_size = 4, indent_unit = space).
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'sql' },
+  callback = function()
+    vim.bo.expandtab = true -- use spaces, not tab characters
+    vim.bo.shiftwidth = 4 -- size of an indent (>>, <<, autoindent)
+    vim.bo.tabstop = 4 -- display width of a tab
+    vim.bo.softtabstop = 4 -- <Tab>/<BS> insert/delete 4 spaces
+  end,
+})
+
 -- Resolve Terraform file type detech issue
 -- When create a new .tf files, the buffer file type was detached as tf rather than terraform
 -- that cause fail to load terraform lsp and treesitter

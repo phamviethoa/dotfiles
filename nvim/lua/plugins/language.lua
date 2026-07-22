@@ -38,6 +38,17 @@ local lsp_servers_config = {
   gh_actions_ls = {},
 }
 
+-- dbt language server (j-clemons/dbt-language-server).
+-- Installed outside of Mason (see `install.sh --dbt`), so it is configured
+-- separately from `lsp_servers_config` to avoid mason-tool-installer trying
+-- to fetch it. Provides completion for ref()/source()/seed()/macro()/var(),
+-- hover, and go-to-definition inside a dbt project.
+local dbt_lsp_config = {
+  cmd = { 'dbt-language-server' },
+  filetypes = { 'sql', 'yaml' },
+  root_markers = { 'dbt_project.yml' },
+}
+
 local linter_config = {
   -- markdown = { 'markdownlint' },
 }
@@ -47,7 +58,23 @@ local formatter_config = {
   sh = { 'shfmt' },
   bash = { 'shfmt' },
   python = { 'black' },
+  sql = { 'sqlfluff' },
+  yaml = { 'yamlfmt' },
 }
+
+-- Prefer a dbt project's virtualenv sqlfluff (it has the right dialect plugins
+-- and matches the project's pinned version) and fall back to the Mason/global
+-- one. Walks up from the file being formatted looking for `.venv/bin/sqlfluff`.
+local function sqlfluff_command(_, ctx)
+  local root = vim.fs.root(ctx.filename, { '.sqlfluff', 'dbt_project.yml' })
+  if root then
+    local venv_bin = root .. '/.venv/bin/sqlfluff'
+    if vim.fn.executable(venv_bin) == 1 then
+      return venv_bin
+    end
+  end
+  return 'sqlfluff'
+end
 
 return {
   {
@@ -262,6 +289,8 @@ return {
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'sqlfluff', -- SQL / dbt linter + formatter (fallback when no project .venv)
+        'yamlfmt', -- YAML formatter (dbt schema.yml, etc.)
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -274,6 +303,15 @@ return {
 
         vim.lsp.config(server, cfg)
         vim.lsp.enable(server)
+      end
+
+      -- dbt language server: only enabled when its binary is on $PATH
+      -- (install via `./install.sh --dbt`). Configured here rather than via
+      -- Mason since it is distributed as a standalone binary.
+      if vim.fn.executable 'dbt-language-server' == 1 then
+        dbt_lsp_config.capabilities = vim.tbl_deep_extend('force', {}, capabilities, dbt_lsp_config.capabilities or {})
+        vim.lsp.config('dbt', dbt_lsp_config)
+        vim.lsp.enable 'dbt'
       end
     end,
   },
@@ -403,12 +441,33 @@ return {
           return nil
         else
           return {
-            timeout_ms = 2000,
+            timeout_ms = 5000,
             lsp_format = 'fallback',
           }
         end
       end,
       formatters_by_ft = formatter_config,
+      formatters = {
+        -- Format dbt/SQL with sqlfluff.
+        --  * command: prefer the dbt project's .venv sqlfluff (see above).
+        --  * cwd: the dbt project root so the project's `.sqlfluff` is picked up
+        --    (dialect, rules, line length, etc.).
+        --  * `--templater jinja`: override the project's `dbt` templater for
+        --    on-save formatting so it does NOT need a warehouse connection.
+        --    sqlfluff's jinja templater mocks dbt built-ins (ref/source/config/
+        --    var), so models format offline. Remove this arg to honor the
+        --    project's templater exactly (slower; needs dbt + a profile).
+        sqlfluff = {
+          command = sqlfluff_command,
+          args = { 'fix', '--templater', 'jinja', '--disable-progress-bar', '-' },
+          -- Deferred require: this table is built at plugin-spec load time,
+          -- before conform itself is on the runtime path.
+          cwd = function(self, ctx)
+            return require('conform.util').root_file { '.sqlfluff', 'dbt_project.yml' }(self, ctx)
+          end,
+          require_cwd = false,
+        },
+      },
     },
   },
   { -- Linting
@@ -469,11 +528,46 @@ return {
   {
     -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    -- Pin to the classic `master` branch. nvim-treesitter's default branch is
+    -- now `main` (an incompatible rewrite that ignores the `opts` below), so we
+    -- must request `master` explicitly for this config style to work.
+    branch = 'master',
     build = ':TSUpdate',
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    init = function()
+      -- dbt: use the Jinja parser as the root language for `sql`-filetype
+      -- buffers so `{{ ... }}` / `{% ... %}` get Jinja highlighting, with SQL
+      -- injected into the surrounding text (see
+      -- `after/queries/jinja/injections.scm`). Plain SQL files parse as a single
+      -- injected SQL region, so they keep full SQL highlighting too.
+      --
+      -- Registered in `init` (before the plugin loads and before any highlighter
+      -- attaches) so the very first `.sql` buffer opened at startup already uses
+      -- the Jinja parser.
+      vim.treesitter.language.register('jinja', 'sql')
+    end,
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'terraform', 'hcl', 'yaml' },
+      ensure_installed = {
+        'bash',
+        'diff',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'vim',
+        'vimdoc',
+        'terraform',
+        'hcl',
+        'yaml',
+
+        -- dbt / sql developement
+        'sql',
+        'jinja',
+        'jinja_inline',
+        'python',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -483,7 +577,10 @@ return {
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { 'ruby' },
       },
-      indent = { enable = true, disable = { 'ruby' } },
+      -- `sql` uses the Jinja parser (see config below); disable Treesitter
+      -- indent for it so Jinja indent rules don't fight SQL. sqlfluff handles
+      -- SQL formatting/indentation on save instead.
+      indent = { enable = true, disable = { 'ruby', 'sql', 'jinja' } },
     },
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
